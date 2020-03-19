@@ -1,10 +1,32 @@
 import React, { useEffect } from "react";
+import SearchBar from "./SearchBar";
+import ColorBox from "./ColorBox";
 
 declare global {
     interface Window {
         kakao: any;
     }
 }
+
+const layoutStyle: React.CSSProperties = {
+    width: "100%",
+    height: "100%",
+    position: "relative"
+};
+
+const wrapStyle: React.CSSProperties = {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    left: 0,
+    top: 0
+};
+
+const mapStyle: React.CSSProperties = {
+    width: "100vw",
+    height: "100vh",
+    zIndex: -1
+};
 
 const App: React.FC = () => {
     useEffect(() => {
@@ -13,6 +35,7 @@ const App: React.FC = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(loadLocation);
         } else {
+            alert("no gps");
         }
 
         function loadLocation(position: any) {
@@ -68,8 +91,14 @@ const App: React.FC = () => {
     }, []);
 
     return (
-        <div className="App">
-            <div id="map" style={{ width: "100vw", height: "100vh" }} />
+        <div className="App" style={layoutStyle}>
+            <div style={wrapStyle}>
+                <div id="map" style={mapStyle} />
+            </div>
+            <div style={wrapStyle}>
+                <SearchBar />
+                <ColorBox />
+            </div>
         </div>
     );
 };
