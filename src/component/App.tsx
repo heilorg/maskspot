@@ -70,20 +70,45 @@ const App: React.FC = () => {
                 .then(res => res.json())
                 .then(res => {
                     let stores = res.stores;
-                    stores.forEach((data: any) =>
-                        setMarker({ lat: data.lat, lng: data.lng })
-                    );
+                    for (let i = 0; i < stores.length; i++) {
+                        setMarker(stores[i]);
+                    }
                 });
         }
 
-        function setMarker(location: { lat: number; lng: number }) {
-            var markerPosition = new window.kakao.maps.LatLng(
-                location.lat,
-                location.lng
+        function setMarker(store: any) {
+            if (store.remain_stat == null) store.remain_stat = "empty";
+            let imageSrc = `/image/${store.remain_stat}.png`;
+            let imageSize = new window.kakao.maps.Size(50, 50);
+            let imageOption = { offset: new window.kakao.maps.Point(25, 50) };
+            let markerImage = new window.kakao.maps.MarkerImage(
+                imageSrc,
+                imageSize,
+                imageOption
+            );
+            let markerPosition = new window.kakao.maps.LatLng(
+                store.lat,
+                store.lng
             );
 
-            var marker = new window.kakao.maps.Marker({
-                position: markerPosition
+            let infoWindow = new window.kakao.maps.InfoWindow({
+                content: `<div>${store.created_at}, ${store.addr}, ${store.name}</div>`
+            });
+
+            let marker = new window.kakao.maps.Marker({
+                position: markerPosition,
+                image: markerImage
+            });
+
+            window.kakao.maps.event.addListener(
+                marker,
+                "mouseover",
+                function() {
+                    infoWindow.open(map, marker);
+                }
+            );
+            window.kakao.maps.event.addListener(marker, "mouseout", function() {
+                infoWindow.close();
             });
 
             marker.setMap(map);
