@@ -92,7 +92,13 @@ const App: React.FC = () => {
             );
 
             let infoWindow = new window.kakao.maps.InfoWindow({
-                content: `<div>${store.created_at}, ${store.addr}, ${store.name}</div>`
+                content: `<div class="marker-data" 
+                style="display: flex;flex-direction: column;justify-content: space-around;padding: 10px;height: calc(100% + 20px);"
+                >
+                    <div>입고시간 : ${store.stock_at}</div>
+                    <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">주     소 : ${store.addr}</div>
+                    <div>지 점 명 : ${store.name}</div>
+                </div>`
             });
 
             let marker = new window.kakao.maps.Marker({
@@ -109,6 +115,16 @@ const App: React.FC = () => {
             );
             window.kakao.maps.event.addListener(marker, "mouseout", function() {
                 infoWindow.close();
+            });
+            window.kakao.maps.event.addListener(marker, "click", function() {
+                var tempElem = document.createElement("textarea");
+                tempElem.value = store.addr;
+                document.body.appendChild(tempElem);
+
+                tempElem.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempElem);
+                alert("주소가 복사되었습니다.");
             });
 
             marker.setMap(map);
